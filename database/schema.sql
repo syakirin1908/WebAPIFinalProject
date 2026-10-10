@@ -52,6 +52,7 @@ CREATE TABLE events (
   id                INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   title             VARCHAR(150)  NOT NULL,
   description       TEXT          NULL,
+  category          VARCHAR(50)   NOT NULL DEFAULT 'Community',
   venue_id          INT UNSIGNED  NOT NULL,
   organiser_id      INT UNSIGNED  NOT NULL,
   event_date        DATE          NOT NULL,
