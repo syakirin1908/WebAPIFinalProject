@@ -1,6 +1,7 @@
 <?php
 // ---- Database (XAMPP defaults) ----
 const DB_HOST = 'localhost';
+const DB_PORT = 3307;
 const DB_NAME = 'event_ticketing_db';
 const DB_USER = 'root';
 const DB_PASS = '';          // XAMPP default is empty

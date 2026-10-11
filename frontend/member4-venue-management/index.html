@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Venue Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>Venue Management</h1>
+    <p>Event Ticketing &amp; Venue Booking System</p>
+  </header>
+
+  <main>
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <section id="login-section">
+      <h2>Login</h2>
+      <form id="login-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required>
+
+        <label for="password">Password</label>
+        <input id="password" type="password"
+               autocomplete="current-password" required>
+
+        <button type="submit">Login</button>
+      </form>
+    </section>
+
+    <div id="management-section" hidden>
+      <section>
+        <p id="user-info"></p>
+        <button id="logout-button" type="button">Logout</button>
+      </section>
+
+      <section id="venue-editor" hidden>
+        <h2 id="form-title">Add Venue</h2>
+        <form id="venue-form">
+          <input id="venue-id" type="hidden">
+
+          <label for="venue-name">Venue Name</label>
+          <input id="venue-name" type="text" maxlength="150" required>
+
+          <label for="address">Address</label>
+          <input id="address" type="text" maxlength="255" required>
+
+          <label for="city">City</label>
+          <input id="city" type="text" maxlength="100" required>
+
+          <label for="capacity">Capacity</label>
+          <input id="capacity" type="number"
+                 min="1" max="4294967295" step="1" required>
+
+          <label for="price">Price per Day (RM)</label>
+          <input id="price" type="number"
+                 min="0" max="99999999.99" step="0.01" required>
+
+          <label for="status">Status</label>
+          <select id="status" required>
+            <option value="available">Available</option>
+            <option value="unavailable">Unavailable</option>
+            <option value="maintenance">Maintenance</option>
+          </select>
+
+          <button id="save-button" type="submit">Save Venue</button>
+          <button id="reset-button" type="button">Clear / Cancel Edit</button>
+        </form>
+      </section>
+
+      <section>
+        <h2>Venue List</h2>
+
+        <label for="search">Search by name or city</label>
+        <input id="search" type="search" placeholder="Search venues…">
+
+        <button id="refresh-button" type="button">Refresh List</button>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>City</th>
+                <th>Capacity</th>
+                <th>Price / Day</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="venue-list"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="venue-details" hidden>
+        <h2>Venue Details</h2>
+        <dl id="details-content"></dl>
+        <button id="close-details" type="button">Close Details</button>
+      </section>
+
+      <section>
+        <h2>Check Venue Availability</h2>
+
+        <form id="availability-form">
+          <label for="availability-venue">Venue</label>
+          <select id="availability-venue" required></select>
+
+          <label for="availability-date">Date</label>
+          <input id="availability-date" type="date" required>
+
+          <label for="start-time">Start Time</label>
+          <input id="start-time" type="time" step="60" required>
+
+          <label for="end-time">End Time</label>
+          <input id="end-time" type="time" step="60" required>
+
+          <button type="submit">Check Availability</button>
+        </form>
+
+        <p id="availability-result" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
