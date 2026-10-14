@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Ticketing & Venue Booking - Event Management (Member 3)</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5.3.3 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Bootstrap Icons 1.11.3 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+
+  <!-- ========================================================================= -->
+  <!-- Top Info Bar (API status & Quick Demo credentials)                         -->
+  <!-- ========================================================================= -->
+  <div class="top-demo-bar py-1 px-3 bg-dark text-white-50 border-bottom border-secondary-subtle">
+    <div class="container-fluid d-flex flex-wrap justify-content-between align-items-center small">
+      <div class="d-flex align-items-center gap-2">
+        <span class="badge rounded-pill bg-success-subtle text-success border border-success-subtle">
+          <i class="bi bi-broadcast me-1"></i>API: <span id="currentApiDisplay">http://localhost/event-ticketing/api</span>
+        </span>
+        <button class="btn btn-link btn-sm text-decoration-none text-light p-0" data-bs-toggle="modal" data-bs-target="#apiConfigModal" title="Change API Base URL">
+          <i class="bi bi-gear-fill"></i> Edit
+        </button>
+      </div>
+      <div class="d-flex align-items-center gap-2 mt-1 mt-md-0">
+        <span class="d-none d-sm-inline text-secondary">Demo 1-Click Login:</span>
+        <button class="btn btn-xs btn-outline-info rounded-pill py-0 px-2" onclick="quickLogin('admin')" title="Login as Admin">
+          <i class="bi bi-shield-lock me-1"></i>Admin
+        </button>
+        <button class="btn btn-xs btn-outline-warning rounded-pill py-0 px-2" onclick="quickLogin('organiser')" title="Login as Organiser">
+          <i class="bi bi-briefcase me-1"></i>Organiser
+        </button>
+        <button class="btn btn-xs btn-outline-light rounded-pill py-0 px-2" onclick="quickLogin('customer')" title="Login as Customer">
+          <i class="bi bi-person me-1"></i>Customer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- Main Navbar                                                               -->
+  <!-- ========================================================================= -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary-custom shadow-sm sticky-top">
+    <div class="container-fluid px-3 px-lg-4">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#" onclick="switchView('browse'); return false;">
+        <div class="brand-icon">
+          <i class="bi bi-ticket-perforated-fill"></i>
+        </div>
+        <div class="d-flex flex-column lh-1">
+          <span class="fw-bold tracking-tight fs-5">TicketVerse</span>
+          <span class="text-white-50 font-monospace" style="font-size: 0.7rem;">Member 3 &bull; Event Management</span>
+        </div>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <!-- Navigation Links / Views -->
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
+          <li class="nav-item">
+            <a class="nav-link nav-view active" id="nav-browse" href="#" onclick="switchView('browse'); return false;">
+              <i class="bi bi-calendar-event me-1"></i> Browse Events
+            </a>
+          </li>
+          <!-- Admin & Organiser only view -->
+          <li class="nav-item d-none" id="nav-manage-item">
+            <a class="nav-link nav-view" id="nav-manage" href="#" onclick="switchView('manage'); return false;">
+              <i class="bi bi-sliders me-1"></i> Event Management
+            </a>
+          </li>
+          <!-- Admin & Organiser direct create button -->
+          <li class="nav-item d-none" id="nav-create-item">
+            <a class="nav-link text-warning fw-semibold" href="#" onclick="openCreateModal(); return false;">
+              <i class="bi bi-plus-circle-fill me-1"></i> Create Event
+            </a>
+          </li>
+        </ul>
+
+        <!-- Right Side: User Status & Login/Logout -->
+        <div class="d-flex align-items-center gap-3">
+          <!-- Guest view -->
+          <div id="auth-guest-section" class="d-flex align-items-center gap-2">
+            <span class="text-white-50 small d-none d-md-inline">Not logged in</span>
+            <button class="btn btn-outline-light btn-sm px-3 rounded-pill" data-bs-toggle="modal" data-bs-target="#loginModal">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Login
+            </button>
+          </div>
+
+          <!-- Logged in view -->
+          <div id="auth-user-section" class="d-none align-items-center gap-2">
+            <div class="user-profile-badge d-flex align-items-center gap-2 bg-white bg-opacity-10 py-1 px-3 rounded-pill text-white">
+              <div class="user-avatar" id="userAvatar">A</div>
+              <div class="d-flex flex-column text-start lh-sm">
+                <span class="fw-semibold small" id="userNameDisplay">User Name</span>
+                <span class="small font-monospace" id="userRoleBadge">role</span>
+              </div>
+            </div>
+            <button class="btn btn-outline-light btn-sm rounded-pill px-3" onclick="logout()" title="Logout">
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================= -->
+  <!-- Main Container                                                            -->
+  <!-- ========================================================================= -->
+  <main class="container-fluid px-3 px-lg-4 py-4">
+
+    <!-- Guest / Role Hint Alert Banner -->
+    <div id="roleAlertBanner" class="alert alert-info border-0 shadow-sm d-flex align-items-center justify-content-between p-3 mb-4 rounded-3 d-none">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-info-circle-fill fs-5 text-info"></i>
+        <span id="roleAlertText">You are browsing as a customer. Login with an Admin or Organiser account to create, edit, or delete events.</span>
+      </div>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 1: BROWSE EVENTS (PUBLIC & ALL ROLES)                              -->
+    <!-- ======================================================================= -->
+    <section id="browse-view">
+      <!-- Browse Header & Search / Filters Hero -->
+      <div class="card border-0 shadow-sm rounded-4 mb-4 filter-card">
+        <div class="card-body p-4">
+          <div class="row align-items-center mb-3">
+            <div class="col-md-7">
+              <h2 class="h4 fw-bold text-dark mb-1">
+                <i class="bi bi-compass text-primary me-2"></i>Explore Upcoming Events
+              </h2>
+              <p class="text-muted small mb-0">Discover live concerts, tech summits, sports, and community gatherings across premier venues.</p>
+            </div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0 d-none" id="browseCreateBtnContainer">
+              <button class="btn btn-primary rounded-pill px-3 shadow-sm" onclick="openCreateModal()">
+                <i class="bi bi-plus-lg me-1"></i> Create New Event
+              </button>
+            </div>
+          </div>
+
+          <!-- Filter Controls -->
+          <form id="browseFilterForm" onsubmit="handleBrowseFilter(event)">
+            <div class="row g-2">
+              <!-- Search box -->
+              <div class="col-12 col-md-4">
+                <div class="input-group">
+                  <span class="input-group-text bg-white border-end-0 text-muted">
+                    <i class="bi bi-search"></i>
+                  </span>
+                  <input type="text" class="form-control border-start-0 ps-0" id="filterSearch" placeholder="Search by title, description...">
+                </div>
+              </div>
+
+              <!-- Category filter -->
+              <div class="col-6 col-md-2">
+                <select class="form-select" id="filterCategory">
+                  <option value="">All Categories</option>
+                  <option value="Music">Music</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Charity">Charity</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Business">Business</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Community">Community</option>
+                </select>
+              </div>
+
+              <!-- Venue filter -->
+              <div class="col-6 col-md-3">
+                <select class="form-select" id="filterVenue">
+                  <option value="">All Venues</option>
+                  <!-- Populated dynamically -->
+                </select>
+              </div>
+
+              <!-- Status filter -->
+              <div class="col-6 col-md-2">
+                <select class="form-select" id="filterStatus">
+                  <option value="">All Statuses</option>
+                  <option value="published" selected>Published</option>
+                  <option value="draft">Draft</option>
+                  <option value="completed">Completed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+
+              <!-- Filter / Reset buttons -->
+              <div class="col-6 col-md-1 d-flex gap-1">
+                <button type="submit" class="btn btn-primary w-100" title="Apply Filter">
+                  <i class="bi bi-funnel-fill"></i>
+                </button>
+                <button type="button" class="btn btn-outline-secondary" onclick="resetBrowseFilters()" title="Reset Filters">
+                  <i class="bi bi-arrow-counterclockwise"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Browse Results Header -->
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="text-muted small">
+          Showing <span class="fw-semibold text-dark" id="browseEventsCount">0</span> events
+          <span id="activeFiltersSummary" class="ms-2"></span>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <span class="text-muted small">Items per page:</span>
+          <select class="form-select form-select-sm w-auto" id="browseLimitSelect" onchange="changeBrowseLimit()">
+            <option value="6">6</option>
+            <option value="9" selected>9</option>
+            <option value="12">12</option>
+            <option value="18">18</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Events Card Grid -->
+      <div class="row g-4 mb-4" id="eventsGrid">
+        <!-- Rendered dynamically via JavaScript -->
+        <div class="col-12 text-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading events...</span>
+          </div>
+          <p class="text-muted mt-2">Loading events from API...</p>
+        </div>
+      </div>
+
+      <!-- Pagination for Browse View -->
+      <nav aria-label="Browse Events Pagination" id="browsePaginationNav" class="d-flex justify-content-center mt-4">
+        <ul class="pagination pagination-md shadow-sm rounded-pill" id="browsePaginationList">
+          <!-- Rendered dynamically -->
+        </ul>
+      </nav>
+    </section>
+
+    <!-- ======================================================================= -->
+    <!-- VIEW 2: EVENT MANAGEMENT (ADMIN & ORGANISER ONLY)                       -->
+    <!-- ======================================================================= -->
+    <section id="manage-view" class="d-none">
+      <!-- Management Header & Quick Stats -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+        <div>
+          <h2 class="h3 fw-bold text-dark mb-1">
+            <i class="bi bi-sliders text-primary me-2"></i>Event Management Dashboard
+          </h2>
+          <p class="text-muted small mb-0">
+            Create, update, manage, and monitor ticketing capacity.
+            <span id="manageRolePermissionNote" class="text-primary fw-medium"></span>
+          </p>
+        </div>
+        <div>
+          <button class="btn btn-primary rounded-pill px-4 shadow-sm" onclick="openCreateModal()">
+            <i class="bi bi-plus-circle me-1"></i> Create New Event
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Metrics Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm rounded-3 metric-card">
+            <div class="card-body p-3 d-flex align-items-center">
+              <div class="metric-icon bg-primary-subtle text-primary me-3">
+                <i class="bi bi-calendar2-check-fill fs-4"></i>
+              </div>
+              <div>
+                <div class="text-muted small text-uppercase fw-semibold">Total Events</div>
+                <div class="fs-4 fw-bold text-dark" id="metricTotalEvents">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm rounded-3 metric-card">
+            <div class="card-body p-3 d-flex align-items-center">
+              <div class="metric-icon bg-success-subtle text-success me-3">
+                <i class="bi bi-check-circle-fill fs-4"></i>
+              </div>
+              <div>
+                <div class="text-muted small text-uppercase fw-semibold">Published</div>
+                <div class="fs-4 fw-bold text-dark" id="metricPublishedEvents">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm rounded-3 metric-card">
+            <div class="card-body p-3 d-flex align-items-center">
+              <div class="metric-icon bg-secondary-subtle text-secondary me-3">
+                <i class="bi bi-file-earmark-text-fill fs-4"></i>
+              </div>
+              <div>
+                <div class="text-muted small text-uppercase fw-semibold">Draft</div>
+                <div class="fs-4 fw-bold text-dark" id="metricDraftEvents">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-lg-3">
+          <div class="card border-0 shadow-sm rounded-3 metric-card">
+            <div class="card-body p-3 d-flex align-items-center">
+              <div class="metric-icon bg-danger-subtle text-danger me-3">
+                <i class="bi bi-x-circle-fill fs-4"></i>
+              </div>
+              <div>
+                <div class="text-muted small text-uppercase fw-semibold">Cancelled / End</div>
+                <div class="fs-4 fw-bold text-dark" id="metricOtherEvents">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Management Table Card -->
+      <div class="card border-0 shadow-sm rounded-4">
+        <div class="card-body p-3 p-md-4">
+          <!-- Management Filters Bar -->
+          <div class="row g-2 align-items-center mb-3">
+            <div class="col-12 col-md-4">
+              <div class="input-group">
+                <span class="input-group-text bg-white text-muted"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="manageSearchInput" placeholder="Filter events..." oninput="debounceManageSearch()">
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <select class="form-select" id="manageCategorySelect" onchange="loadManagementEvents(1)">
+                <option value="">All Categories</option>
+                <option value="Music">Music</option>
+                <option value="Technology">Technology</option>
+                <option value="Charity">Charity</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Business">Business</option>
+                <option value="Sports">Sports</option>
+                <option value="Community">Community</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-3">
+              <select class="form-select" id="manageStatusSelect" onchange="loadManagementEvents(1)">
+                <option value="">All Statuses</option>
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+                <option value="cancelled">Cancelled</option>
+                <option value="completed">Completed</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-2 text-md-end">
+              <button class="btn btn-outline-secondary w-100" onclick="resetManageFilters()">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+
+          <!-- Table Responsive Container -->
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="eventsTable">
+              <thead class="table-light text-muted small text-uppercase">
+                <tr>
+                  <th scope="col" style="width: 60px;">ID</th>
+                  <th scope="col">Event &amp; Category</th>
+                  <th scope="col">Venue</th>
+                  <th scope="col">Date &amp; Time</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Tickets Available</th>
+                  <th scope="col">Organiser</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="text-end" style="min-width: 130px;">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="eventsTableBody">
+                <!-- Rendered dynamically -->
+                <tr>
+                  <td colspan="9" class="text-center py-4 text-muted">
+                    <div class="spinner-border spinner-border-sm text-primary me-2"></div> Loading table data...
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Management Pagination -->
+          <div class="d-flex flex-wrap justify-content-between align-items-center mt-3 pt-3 border-top">
+            <div class="text-muted small" id="managePaginationInfo">
+              Showing 0 to 0 of 0 events
+            </div>
+            <nav aria-label="Management Table Pagination">
+              <ul class="pagination pagination-sm mb-0" id="managePaginationList">
+                <!-- Rendered dynamically -->
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: LOGIN                                                              -->
+  <!-- ========================================================================= -->
+  <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow rounded-4">
+        <div class="modal-header bg-primary-custom text-white border-0 rounded-top-4 p-4">
+          <div class="d-flex align-items-center gap-2">
+            <div class="bg-white text-primary rounded-circle p-2 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+              <i class="bi bi-person-fill-lock fs-5"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fw-bold" id="loginModalLabel">Account Login</h5>
+              <p class="text-white-50 small mb-0">Sign in to manage and administer events</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <!-- Login Feedback Alert -->
+          <div id="loginAlert" class="alert alert-danger py-2 px-3 small d-none" role="alert"></div>
+
+          <!-- Quick Fill Presets for University Demo -->
+          <div class="bg-light p-3 rounded-3 mb-3 border">
+            <div class="text-muted small fw-semibold mb-2">
+              <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Quick Demo Presets:
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="btn btn-sm btn-outline-danger flex-grow-1" onclick="fillLoginForm('admin@event.com', 'Admin@123')">
+                <i class="bi bi-shield-check"></i> Admin
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-warning flex-grow-1" onclick="fillLoginForm('hafiz@event.com', 'Organiser@123')">
+                <i class="bi bi-briefcase"></i> Organiser
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-secondary flex-grow-1" onclick="fillLoginForm('daniel@mail.com', 'Customer@123')">
+                <i class="bi bi-person"></i> Customer
+              </button>
+            </div>
+          </div>
+
+          <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+            <div class="mb-3">
+              <label for="loginEmail" class="form-label small fw-semibold">Email Address</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="bi bi-envelope"></i></span>
+                <input type="email" class="form-control" id="loginEmail" required placeholder="name@event.com">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="loginPassword" class="form-label small fw-semibold">Password</label>
+              <div class="input-group">
+                <span class="input-group-text bg-light text-muted"><i class="bi bi-key"></i></span>
+                <input type="password" class="form-control" id="loginPassword" required placeholder="Enter password">
+                <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('loginPassword', this)">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-3 shadow-sm" id="loginSubmitBtn">
+              <span id="loginBtnText"><i class="bi bi-box-arrow-in-right me-1"></i> Sign In</span>
+              <span id="loginBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: CREATE / EDIT EVENT                                                -->
+  <!-- ========================================================================= -->
+  <div class="modal fade" id="eventFormModal" tabindex="-1" aria-labelledby="eventFormModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header bg-primary-custom text-white rounded-top-4 p-3 px-4">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-calendar-plus-fill fs-4 text-warning" id="eventFormIcon"></i>
+            <div>
+              <h5 class="modal-title fw-bold" id="eventFormModalLabel">Create New Event</h5>
+              <p class="text-white-50 small mb-0" id="eventFormModalSub">Fill in the event details and venue allocation</p>
+            </div>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <!-- Form Validation / Error Container -->
+          <div id="eventFormAlert" class="alert alert-danger py-2 px-3 small d-none" role="alert"></div>
+
+          <form id="eventForm" onsubmit="handleEventFormSubmit(event)">
+            <!-- Hidden Event ID (for edit) -->
+            <input type="hidden" id="eventFormId">
+
+            <div class="row g-3">
+              <!-- Event Title -->
+              <div class="col-12">
+                <label for="formTitle" class="form-label small fw-semibold">Event Title <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="formTitle" required maxlength="150" placeholder="e.g. Muar Music Fest 2026">
+                <div class="invalid-feedback" id="err-title"></div>
+              </div>
+
+              <!-- Category -->
+              <div class="col-12 col-md-6">
+                <label for="formCategory" class="form-label small fw-semibold">Category <span class="text-danger">*</span></label>
+                <select class="form-select" id="formCategory" required>
+                  <option value="" disabled selected>Select category...</option>
+                  <option value="Music">Music</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Charity">Charity</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Business">Business</option>
+                  <option value="Sports">Sports</option>
+                  <option value="Community">Community</option>
+                </select>
+                <div class="invalid-feedback" id="err-category"></div>
+              </div>
+
+              <!-- Venue Dropdown -->
+              <div class="col-12 col-md-6">
+                <label for="formVenue" class="form-label small fw-semibold">Venue <span class="text-danger">*</span></label>
+                <select class="form-select" id="formVenue" required>
+                  <option value="" disabled selected>Select venue...</option>
+                  <!-- Populated dynamically -->
+                </select>
+                <div class="invalid-feedback" id="err-venue_id"></div>
+              </div>
+
+              <!-- Event Date -->
+              <div class="col-12 col-md-4">
+                <label for="formDate" class="form-label small fw-semibold">Event Date <span class="text-danger">*</span></label>
+                <input type="date" class="form-control" id="formDate" required>
+                <div class="invalid-feedback" id="err-event_date"></div>
+              </div>
+
+              <!-- Start Time -->
+              <div class="col-6 col-md-4">
+                <label for="formStartTime" class="form-label small fw-semibold">Start Time <span class="text-danger">*</span></label>
+                <input type="time" class="form-control" id="formStartTime" required>
+                <div class="invalid-feedback" id="err-start_time"></div>
+              </div>
+
+              <!-- End Time -->
+              <div class="col-6 col-md-4">
+                <label for="formEndTime" class="form-label small fw-semibold">End Time <span class="text-danger">*</span></label>
+                <input type="time" class="form-control" id="formEndTime" required>
+                <div class="invalid-feedback" id="err-end_time"></div>
+              </div>
+
+              <!-- Ticket Price -->
+              <div class="col-12 col-md-4">
+                <label for="formTicketPrice" class="form-label small fw-semibold">Ticket Price (MYR) <span class="text-danger">*</span></label>
+                <div class="input-group">
+                  <span class="input-group-text">RM</span>
+                  <input type="number" step="0.01" min="0" class="form-control" id="formTicketPrice" required placeholder="0.00">
+                </div>
+                <div class="invalid-feedback" id="err-ticket_price"></div>
+              </div>
+
+              <!-- Total Tickets -->
+              <div class="col-6 col-md-4">
+                <label for="formTotalTickets" class="form-label small fw-semibold">Total Tickets <span class="text-danger">*</span></label>
+                <input type="number" min="1" class="form-control" id="formTotalTickets" required placeholder="e.g. 500" oninput="handleTotalTicketsChange()">
+                <div class="invalid-feedback" id="err-total_tickets"></div>
+              </div>
+
+              <!-- Available Tickets (Editable on edit, defaults to total tickets on create) -->
+              <div class="col-6 col-md-4">
+                <label for="formAvailableTickets" class="form-label small fw-semibold">Available Tickets <span class="text-danger">*</span></label>
+                <input type="number" min="0" class="form-control" id="formAvailableTickets" required placeholder="e.g. 500">
+                <div class="invalid-feedback" id="err-available_tickets"></div>
+              </div>
+
+              <!-- Status -->
+              <div class="col-12 col-md-6">
+                <label for="formStatus" class="form-label small fw-semibold">Publication Status <span class="text-danger">*</span></label>
+                <select class="form-select" id="formStatus" required>
+                  <option value="draft">Draft (Private, not listed for booking)</option>
+                  <option value="published">Published (Public, tickets on sale)</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="completed">Completed</option>
+                </select>
+                <div class="invalid-feedback" id="err-status"></div>
+              </div>
+
+              <!-- Organiser (Admin can see organiser info if editing) -->
+              <div class="col-12 col-md-6" id="formOrganiserDisplayGroup">
+                <label class="form-label small fw-semibold text-muted">Organiser Ownership</label>
+                <input type="text" class="form-control bg-light" id="formOrganiserDisplay" readonly value="Current Logged-in User">
+              </div>
+
+              <!-- Description -->
+              <div class="col-12">
+                <label for="formDescription" class="form-label small fw-semibold">Description</label>
+                <textarea class="form-control" id="formDescription" rows="3" placeholder="Provide event schedule, highlights, special guests, terms..."></textarea>
+                <div class="invalid-feedback" id="err-description"></div>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+              <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm" id="eventFormSubmitBtn">
+                <span id="eventFormSubmitText"><i class="bi bi-check-circle me-1"></i> Save Event</span>
+                <span id="eventFormSubmitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: EVENT DETAILS VIEW                                                 -->
+  <!-- ========================================================================= -->
+  <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="modal-header bg-dark text-white p-4">
+          <div class="d-flex flex-column gap-1">
+            <div class="d-flex align-items-center gap-2">
+              <span class="badge rounded-pill" id="detailCategoryBadge">Category</span>
+              <span class="badge rounded-pill" id="detailStatusBadge">Status</span>
+              <span class="text-white-50 small font-monospace" id="detailIdBadge">#ID</span>
+            </div>
+            <h4 class="modal-title fw-bold text-white mt-1" id="detailTitle">Event Title</h4>
+          </div>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body p-4">
+          <div class="row g-4">
+            <!-- Left Info Column -->
+            <div class="col-md-7">
+              <h6 class="text-uppercase text-muted fw-bold small mb-2">About Event</h6>
+              <p class="text-dark" id="detailDescription" style="white-space: pre-line;">No description provided.</p>
+
+              <hr class="my-3 text-muted">
+
+              <h6 class="text-uppercase text-muted fw-bold small mb-2">Venue &amp; Location</h6>
+              <div class="d-flex align-items-start gap-2 mb-2">
+                <i class="bi bi-geo-alt-fill text-danger fs-5"></i>
+                <div>
+                  <div class="fw-semibold text-dark" id="detailVenueName">Venue Name</div>
+                  <div class="text-muted small" id="detailVenueAddress">Address, City</div>
+                </div>
+              </div>
+
+              <div class="d-flex align-items-center gap-2 text-muted small mt-2">
+                <i class="bi bi-people-fill text-primary"></i>
+                <span>Venue Capacity: <strong id="detailVenueCapacity">-</strong> seats</span>
+              </div>
+            </div>
+
+            <!-- Right Info / Stats Column -->
+            <div class="col-md-5">
+              <div class="card bg-light border-0 rounded-3 p-3 mb-3">
+                <h6 class="text-uppercase text-muted fw-bold small mb-3">Schedule</h6>
+                <div class="d-flex align-items-center gap-2 mb-2">
+                  <i class="bi bi-calendar-event text-primary fs-5"></i>
+                  <div>
+                    <div class="small text-muted">Date</div>
+                    <div class="fw-semibold text-dark" id="detailDate">Date</div>
+                  </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-clock text-warning fs-5"></i>
+                  <div>
+                    <div class="small text-muted">Time</div>
+                    <div class="fw-semibold text-dark" id="detailTime">Time</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card bg-light border-0 rounded-3 p-3 mb-3">
+                <h6 class="text-uppercase text-muted fw-bold small mb-2">Ticketing Details</h6>
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                  <span class="text-muted small">Ticket Price:</span>
+                  <span class="fs-4 fw-bold text-success" id="detailPrice">RM 0.00</span>
+                </div>
+                
+                <div class="mb-2">
+                  <div class="d-flex justify-content-between small text-muted mb-1">
+                    <span>Available Tickets:</span>
+                    <strong id="detailTicketsFraction">0 / 0</strong>
+                  </div>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar" id="detailProgressBar" role="progressbar" style="width: 100%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card bg-white border rounded-3 p-3 small text-muted">
+                <div class="d-flex align-items-center gap-2">
+                  <i class="bi bi-person-badge-fill text-secondary fs-5"></i>
+                  <div>
+                    <div>Organised by: <strong class="text-dark" id="detailOrganiserName">-</strong></div>
+                    <div class="font-monospace text-xs" id="detailOrganiserId">ID: -</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light p-3 border-top d-flex justify-content-between">
+          <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Close</button>
+          <div class="d-flex gap-2" id="detailActionButtons">
+            <!-- Dynamic Edit / Delete buttons if authorized -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: DELETE CONFIRMATION                                                -->
+  <!-- ========================================================================= -->
+  <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow rounded-4">
+        <div class="modal-body p-4 text-center">
+          <div class="text-danger mb-3">
+            <i class="bi bi-exclamation-triangle-fill display-4"></i>
+          </div>
+          <h5 class="fw-bold mb-2" id="deleteConfirmModalLabel">Delete Event?</h5>
+          <p class="text-muted small mb-3">
+            Are you sure you want to permanently delete event <strong id="deleteTargetTitle" class="text-dark">""</strong>?
+            This action cannot be undone.
+          </p>
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger px-4 rounded-pill shadow-sm" id="confirmDeleteBtn" onclick="executeDeleteEvent()">
+              <span id="deleteBtnText"><i class="bi bi-trash3-fill me-1"></i> Delete Event</span>
+              <span id="deleteBtnSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: API CONFIGURATION                                                  -->
+  <!-- ========================================================================= -->
+  <div class="modal fade" id="apiConfigModal" tabindex="-1" aria-labelledby="apiConfigModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow rounded-4">
+        <div class="modal-header bg-dark text-white rounded-top-4 p-3 px-4">
+          <h5 class="modal-title fw-bold" id="apiConfigModalLabel"><i class="bi bi-gear-fill me-2"></i>API Endpoint Configuration</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="text-muted small">Specify the base URL for the backend REST API endpoints.</p>
+          <div class="mb-3">
+            <label for="apiUrlInput" class="form-label small fw-semibold">API Base URL</label>
+            <input type="url" class="form-control" id="apiUrlInput" value="http://localhost/event-ticketing/api">
+            <div class="form-text">Default XAMPP setup: <code>http://localhost/event-ticketing/api</code></div>
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="resetApiUrl()">Reset to Default</button>
+            <button type="button" class="btn btn-primary btn-sm px-3" onclick="saveApiUrl()">Save &amp; Reload</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TOAST NOTIFICATIONS CONTAINER                                             -->
+  <!-- ========================================================================= -->
+  <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1100;"></div>
+
+  <!-- ========================================================================= -->
+  <!-- Bootstrap 5.3.3 Bundle with Popper                                       -->
+  <!-- ========================================================================= -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

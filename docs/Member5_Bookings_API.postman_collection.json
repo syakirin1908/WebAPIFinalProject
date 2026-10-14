@@ -1,0 +1,48 @@
+{
+	"info": {
+		"name": "Member 5 - Bookings API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List Bookings (GET /bookings)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" }
+				],
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "Create Booking (POST /bookings)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_id\": 1,\n  \"quantity\": 2\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "Cancel Booking (PUT /bookings/:id)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"cancelled\"\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings/1", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings", "1"] }
+			}
+		}
+	]
+}

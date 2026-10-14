@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Member 5 - Booking & Ticket Management</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f4f6f9; color: #333; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        label { font-weight: bold; display: block; margin-top: 10px; }
+        input, select, button { width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; font-weight: bold; cursor: pointer; margin-top: 15px; border: none; }
+        button:hover { background: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background: #f0f0f0; }
+        .qr-img { width: 80px; height: 80px; }
+    </style>
+</head>
+<body>
+    <h2>Member 5: Ticket Booking Management</h2>
+
+    <div class="card">
+        <h3>1. JWT Authentication Token</h3>
+        <label for="jwtToken">Paste Bearer Token:</label>
+        <input type="text" id="jwtToken" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...">
+    </div>
+
+    <div class="card">
+        <h3>2. Create New Booking</h3>
+        <label for="eventId">Event ID:</label>
+        <input type="number" id="eventId" value="1">
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" value="2" min="1">
+        <button onclick="createBooking()">Book Tickets</button>
+    </div>
+
+    <div class="card">
+        <h3>3. My Bookings</h3>
+        <button onclick="fetchBookings()">Refresh Booking List</button>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ref</th>
+                    <th>Event</th>
+                    <th>Qty</th>
+                    <th>Total (RM)</th>
+                    <th>Status</th>
+                    <th>QR Ticket</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookingsTable">
+                <tr><td colspan="7">No bookings loaded. Click refresh above.</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost/event-ticketing/api';
+
+        async function createBooking() {
+            const token = document.getElementById('jwtToken').value.trim();
+            const event_id = parseInt(document.getElementById('eventId').value);
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            if (!token) return alert('Please enter your JWT Token.');
+
+            const res = await fetch(`${API_BASE}/bookings`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ event_id, quantity })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert('Booking created successfully!');
+                fetchBookings();
+            } else {
+                alert('Error: ' + (data.message || JSON.stringify(data.errors)));
+            }
+        }
+
+        async function fetchBookings() {
+            const token = document.getElementById('jwtToken').value.trim();
+            if (!token) return alert('Please enter your JWT Token.');
+
+            const res = await fetch(`${API_BASE}/bookings`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            const data = await res.json();
+            if (!data.success) return alert(data.message);
+
+            const tbody = document.getElementById('bookingsTable');
+            tbody.innerHTML = '';
+
+            data.data.forEach(b => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><b>${b.booking_ref}</b></td>
+                        <td>${b.event_title}</td>
+                        <td>${b.quantity}</td>
+                        <td>RM ${parseFloat(b.total_price).toFixed(2)}</td>
+                        <td>${b.status}</td>
+                        <td>${b.qr_code_url ? `<img src="${b.qr_code_url}" class="qr-img">` : 'N/A'}</td>
+                        <td>
+                            ${b.status !== 'cancelled' ? `<button style="background:#dc3545" onclick="cancelBooking(${b.id})">Cancel</button>` : 'Cancelled'}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function cancelBooking(id) {
+            const token = document.getElementById('jwtToken').value.trim();
+            if (!confirm('Are you sure you want to cancel this booking?')) return;
+
+            const res = await fetch(`${API_BASE}/bookings/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: 'cancelled' })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert('Booking cancelled.');
+                fetchBookings();
+            } else {
+                alert(data.message);
+            }
+        }
+    </script>
+</body>
+</html>
