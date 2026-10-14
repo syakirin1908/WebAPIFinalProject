@@ -1,0 +1,408 @@
+/* ==========================================================================
+   Member 3: Event Management Frontend - Custom Stylesheet
+   Event Ticketing & Venue Booking System
+   ========================================================================== */
+
+:root {
+  --primary-color: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #e0e7ff;
+  --secondary-color: #64748b;
+  --dark-color: #0f172a;
+  --surface-color: #ffffff;
+  --body-bg: #f8fafc;
+  --border-color: #e2e8f0;
+  --card-radius: 1rem;
+  --transition-speed: 0.2s;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--body-bg);
+  color: #334155;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom primary color background */
+.bg-primary-custom {
+  background: linear-gradient(135deg, #3730a3 0%, #4f46e5 100%) !important;
+}
+
+/* Top demo credentials bar */
+.top-demo-bar {
+  font-size: 0.8rem;
+}
+
+.btn-xs {
+  font-size: 0.725rem;
+  line-height: 1.4;
+  padding: 0.15rem 0.5rem;
+}
+
+/* Brand styling */
+.brand-icon {
+  background: rgba(255, 255, 255, 0.2);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+}
+
+.tracking-tight {
+  letter-spacing: -0.025em;
+}
+
+/* Navbar links */
+.nav-view {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem !important;
+  border-radius: 0.5rem;
+  transition: all var(--transition-speed) ease;
+}
+
+.nav-view:hover {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.nav-view.active {
+  color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.22);
+  font-weight: 600;
+}
+
+/* User avatar and profile */
+.user-avatar {
+  width: 28px;
+  height: 28px;
+  background: #ffffff;
+  color: var(--primary-color);
+  font-weight: 700;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+}
+
+.user-profile-badge {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Hero / Filter Card */
+.filter-card {
+  background: linear-gradient(to right, #ffffff, #fcfdff);
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Event Card in Browse Grid */
+.event-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--card-radius);
+  background: #ffffff;
+  transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -10px rgba(0, 0, 0, 0.12) !important;
+  border-color: #cbd5e1;
+}
+
+.event-card-header {
+  padding: 1.25rem 1.25rem 0.75rem;
+}
+
+.event-card-body {
+  padding: 0.5rem 1.25rem;
+  flex-grow: 1;
+}
+
+.event-card-footer {
+  padding: 0.85rem 1.25rem;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.event-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dark-color);
+  line-height: 1.35;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: color var(--transition-speed) ease;
+}
+
+.event-title:hover {
+  color: var(--primary-color);
+}
+
+.event-desc-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+}
+
+/* Event Metadata Pills */
+.event-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  color: #475569;
+  margin-bottom: 0.35rem;
+}
+
+.event-meta-item i {
+  font-size: 0.95rem;
+}
+
+/* Category Badges */
+.badge-category {
+  font-size: 0.725rem;
+  font-weight: 600;
+  padding: 0.35em 0.75em;
+  border-radius: 2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cat-music {
+  background-color: #fdf2f8;
+  color: #db2777;
+  border: 1px solid #fbcfe8;
+}
+
+.cat-technology {
+  background-color: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+.cat-charity {
+  background-color: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.cat-entertainment {
+  background-color: #f5f3ff;
+  color: #7c3aed;
+  border: 1px solid #ddd6fe;
+}
+
+.cat-business {
+  background-color: #fff7ed;
+  color: #ea580c;
+  border: 1px solid #fed7aa;
+}
+
+.cat-sports {
+  background-color: #fefce8;
+  color: #ca8a04;
+  border: 1px solid #fef08a;
+}
+
+.cat-community {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+/* Status Badges */
+.badge-status {
+  font-size: 0.725rem;
+  font-weight: 600;
+  padding: 0.3em 0.65em;
+  border-radius: 2rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-published {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+.status-published .status-dot { background-color: #10b981; }
+
+.status-draft {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+.status-draft .status-dot { background-color: #94a3b8; }
+
+.status-cancelled {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+.status-cancelled .status-dot { background-color: #ef4444; }
+
+.status-completed {
+  background-color: #f8fafc;
+  color: #1e293b;
+  border: 1px solid #cbd5e1;
+}
+.status-completed .status-dot { background-color: #475569; }
+
+/* Metrics Cards in Management Dashboard */
+.metric-card {
+  transition: transform var(--transition-speed) ease;
+  border: 1px solid var(--border-color) !important;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+}
+
+.metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Management Table Styling */
+.table {
+  font-size: 0.9rem;
+}
+
+.table th {
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  background-color: #f8fafc !important;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.table td {
+  padding: 0.85rem 0.75rem;
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background-color var(--transition-speed) ease;
+}
+
+.table tbody tr:hover {
+  background-color: #f8fafc;
+}
+
+.table .ownership-pill {
+  font-size: 0.68rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 1rem;
+}
+
+/* Ticket progress bar styling */
+.ticket-progress {
+  height: 6px;
+  border-radius: 3px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+}
+
+/* Custom Modal Polish */
+.modal-content {
+  border: none;
+}
+
+.rounded-top-4 {
+  border-top-left-radius: 1rem !important;
+  border-top-right-radius: 1rem !important;
+}
+
+.rounded-4 {
+  border-radius: 1rem !important;
+}
+
+/* Toast container custom position */
+.toast {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+}
+
+/* Pagination polish */
+.pagination {
+  margin-bottom: 0;
+  gap: 2px;
+}
+
+.page-link {
+  border-radius: 0.4rem !important;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.page-link:hover {
+  background-color: #f1f5f9;
+  color: var(--primary-color);
+  border-color: #cbd5e1;
+}
+
+.page-item.active .page-link {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.page-item.disabled .page-link {
+  color: #94a3b8;
+  background-color: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+/* Form inputs focus */
+.form-control:focus, .form-select:focus {
+  border-color: #818cf8;
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .brand-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1.1rem;
+  }
+  
+  .event-card-header,
+  .event-card-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
