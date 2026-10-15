@@ -207,7 +207,10 @@ async function manageEvents(v, u) {
         }
         if (Object.keys(err).length) fail(err);
         const t = s => s.length === 5 ? s + ':00' : s;
-        const body = { title: d.title.trim(), description: d.description.trim(), category: d.category.trim() || 'Community', venue_id: +d.venue_id, organiser_id: adm ? +d.organiser_id : u.id, event_date: d.event_date, start_time: t(d.start_time), end_time: t(d.end_time), ticket_price: pr, total_tickets: tt, available_tickets: at, status: d.status };
+        const body = { title: d.title.trim(), description: d.description.trim(), category: d.category.trim() || 'Community', venue_id: +d.venue_id, event_date: d.event_date, start_time: t(d.start_time), end_time: t(d.end_time), ticket_price: pr, total_tickets: tt, available_tickets: at, status: d.status };
+        /* FIX: only admins may send organiser_id. An organiser editing an event sends none
+           (the API refuses any organiser_id from a non-admin). A new event uses the organiser's own id. */
+        if (adm) body.organiser_id = +d.organiser_id; else if (!ev) body.organiser_id = u.id;
         await (ev ? put('/events/' + ev.id, body) : post('/events', body));
         closeModal(); toast(ev ? 'Event updated.' : 'Event created.'); route();
       }, ev ? 'Save changes' : 'Create event');
