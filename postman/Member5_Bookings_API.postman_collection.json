@@ -1,0 +1,144 @@
+{
+	"info": {
+		"name": "Member 5 - Bookings API (Complete)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "01 - Login Customer",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {",
+							"    const response = pm.response.json();",
+							"    pm.collectionVariables.set('customer_token', response.data.token);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [{ "key": "Content-Type", "value": "application/json" }],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"daniel@mail.com\",\n  \"password\": \"Customer@123\"\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/auth/login", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "auth", "login"] }
+			}
+		},
+		{
+			"name": "02 - List Bookings (GET /bookings)",
+			"request": {
+				"method": "GET",
+				"header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "03 - Create Booking (POST /bookings)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200 || pm.response.code === 201) {",
+							"    const response = pm.response.json();",
+							"    pm.collectionVariables.set('booking_id', response.data.id);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{customer_token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_id\": 1,\n  \"quantity\": 2\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "04 - Get Booking By ID (GET /bookings/:id)",
+			"request": {
+				"method": "GET",
+				"header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings/{{booking_id}}", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings", "{{booking_id}}"] }
+			}
+		},
+		{
+			"name": "05 - Cancel Booking (PUT /bookings/:id)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{customer_token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"status\": \"cancelled\"\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings/{{booking_id}}", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings", "{{booking_id}}"] }
+			}
+		},
+		{
+			"name": "06 - Error 401 Unauthorized (No Token)",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "07 - Error 400 Bad Request (Quantity Exceeds Stock)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{customer_token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_id\": 1,\n  \"quantity\": 99999\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		},
+		{
+			"name": "08 - Error 404 Not Found (Invalid Booking ID)",
+			"request": {
+				"method": "GET",
+				"header": [{ "key": "Authorization", "value": "Bearer {{customer_token}}" }],
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings/999999", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings", "999999"] }
+			}
+		},
+		{
+			"name": "09 - Error 422 Unprocessable Entity (Invalid Body)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{ "key": "Authorization", "value": "Bearer {{customer_token}}" },
+					{ "key": "Content-Type", "value": "application/json" }
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event_id\": \"invalid\",\n  \"quantity\": -5\n}"
+				},
+				"url": { "raw": "http://localhost/event-ticketing/api/bookings", "protocol": "http", "host": ["localhost"], "path": ["event-ticketing", "api", "bookings"] }
+			}
+		}
+	],
+	"variable": [
+		{ "key": "customer_token", "value": "" },
+		{ "key": "booking_id", "value": "1" }
+	]
+}
